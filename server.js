@@ -1,40 +1,45 @@
-require('dotenv').config(); // Load environment variables
+require('dotenv').config();
 const express = require('express');
-const sequelize = require('./db');
-const User = require('./models/user'); // Load your user model
-const authRoutes = require('./routes/authRoutes'); // Auth routes
-const productRoutes = require('./routes/productRoutes'); // Product routes
 const cors = require('cors');
 
-const app = express();
-app.use((cors()))
+const authRoutes = require('./routes/authRoutes');
+const productRoutes = require('./routes/productRoutes');
+const orderRoutes = require('./routes/ordersRoutes');
+const sequelize = require('./db');
 
-// Middleware to parse JSON
+const app = express();
+
+app.use(cors());
 app.use(express.json());
 
-// Routes
+// API Routes
 app.use('/api/auth', authRoutes);
-app.use('/api/product', productRoutes)
+app.use('/api/product', productRoutes);
+app.use('/api/orders', orderRoutes);
+// app.use('/api/cart', cartRoutes);
 
-// Test route
+// Root route
 app.get('/', (req, res) => {
   res.send('🔥 Candleoz Backend is alive');
 });
 
-// Global error handler
+// Global Error Handler
 app.use((err, req, res, next) => {
   console.error('🔴 Global Error:', err.stack);
   res.status(500).json({ message: 'Something went wrong', error: err.message });
 });
 
-// DB sync and server start
-sequelize.sync({ alter: true }) // Use { force: true } only during dev if needed
-  .then(() => {
-    console.log('✅ Database synced successfully.');
-    app.listen(3000, () => {
-      console.log('🚀 Server is running on http://localhost:3000');
-    });
-  })
-  .catch((err) => {
-    console.error('❌ Error syncing DB:', err);
-  });
+// Start server
+const PORT = process.env.PORT || 8080;
+
+// sequelize.sync({ alter: true }) // or { force: true } during development
+//   .then(() => {
+//     console.log('✅ All models were synchronized successfully.');
+//   })
+//   .catch(err => {
+//     console.error('❌ Failed to sync models:', err);
+//   });
+
+app.listen(PORT, () => {
+  console.log(`🚀 Server is running on http://localhost:${PORT}`);
+});
