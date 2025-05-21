@@ -1,6 +1,6 @@
 // controllers/productController.js
 const { response } = require('express');
-const { supabase } = require('../supabaseClient');
+const { supabase } = require ('../supabaseClient')
 const { v4: uuidv4 } = require('uuid');
 
 // @desc    Add a new product with images
